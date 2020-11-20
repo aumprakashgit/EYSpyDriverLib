@@ -22,7 +22,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f477b8eb-cf65-463f-90ea-7d418d4a89f1}</ProjectGuid>
+    <ProjectGuid>{9a0bfdeb-5eba-45bb-abcf-2043779ca6a8}</ProjectGuid>
     <RootNamespace>EYSpyDriverLibrary</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
