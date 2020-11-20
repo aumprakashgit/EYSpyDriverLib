@@ -25,6 +25,23 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Commands.h" />
+    <ClInclude Include="ControlProxy.h" />
+    <ClInclude Include="CustomEventArgs.h" />
+    <ClInclude Include="EventTargetWindow.h" />
+    <ClInclude Include="Mem.h" />
+    <ClInclude Include="Messages.h" />
+    <ClInclude Include="PropertyDescriptorProxy.h" />
+    <ClInclude Include="RemoteObject.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="ControlProxy.cpp" />
+    <ClCompile Include="EventTargetWindow.cpp" />
+    <ClCompile Include="PropertyDescriptorProxy.cpp" />
+    <ClCompile Include="RemoteObject.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
