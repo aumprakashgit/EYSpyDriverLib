@@ -14,7 +14,7 @@ static HHOOK _messageHookHandle = NULL;
 void Desktop::EnableHook(IntPtr windowHandle) {
 
     HINSTANCE hinstDLL;
-    hinstDLL = LoadLibrary((LPCTSTR)_T("ManagedSpyLib.dll")); // todo: Need to change to EYSpyDriverLibrary dll
+    hinstDLL = LoadLibrary((LPCTSTR)_T("EYSpyDriverLibrary.dll")); // ManagedSpyLib.dll todo: Need to change to EYSpyDriverLibrary dll
 
     DisableHook();
     DWORD tid = GetWindowThreadProcessId((HWND)windowHandle.ToPointer(), NULL);
@@ -377,7 +377,7 @@ void Desktop::OnMessage(int nCode, WPARAM wparam, LPARAM lparam)
             List<Object^>^ params = (List<Object^>^) store->GetParameters();
             for (int i = 0; i < params->Count; i++) {
                 if (params[i]->GetType()->Equals(Assembly::GetExecutingAssembly()->GetType("EY.ManagedSpy.RemoteObject"))) {
-                    params[i] = ((EY::ManagedSpy::RemoteObject^)params[i])->getObject();
+                    params[i] = ((EY::SpyDriver::RemoteObject^)params[i])->getObject();
                 };
             }
 
@@ -458,4 +458,3 @@ void Desktop::OnMessage(int nCode, WPARAM wparam, LPARAM lparam)
         }
     }
 }
-

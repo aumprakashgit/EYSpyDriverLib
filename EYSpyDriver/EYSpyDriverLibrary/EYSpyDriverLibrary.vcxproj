@@ -26,21 +26,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssemblyInfo.h" />
     <ClInclude Include="Commands.h" />
-    <ClInclude Include="ControlProxy.h" />
+    <ClInclude Include="ControlProxy.h">
+      <FileType>CppClass</FileType>
+    </ClInclude>
     <ClInclude Include="CustomEventArgs.h" />
-    <ClInclude Include="EventTargetWindow.h" />
+    <ClInclude Include="CustomizedBinder.h" />
+    <ClInclude Include="EventTargetWindow.h">
+      <FileType>CppControl</FileType>
+    </ClInclude>
     <ClInclude Include="Mem.h" />
+    <ClInclude Include="MessageFilters.hpp" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="PropertyDescriptorProxy.h" />
     <ClInclude Include="RemoteObject.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="ControlProxy.cpp" />
+    <ClCompile Include="CustomizedBinder.cpp" />
     <ClCompile Include="EventTargetWindow.cpp" />
+    <ClCompile Include="Mem.cpp" />
+    <ClCompile Include="MessageFilters.cpp" />
     <ClCompile Include="PropertyDescriptorProxy.cpp" />
     <ClCompile Include="RemoteObject.cpp" />
+    <ClCompile Include="Stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="makefile.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="EYDriver.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EYDriver.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -147,9 +173,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;EYSPYDRIVERLIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsManaged>true</CompileAsManaged>
+      <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
