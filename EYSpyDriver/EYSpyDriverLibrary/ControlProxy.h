@@ -35,6 +35,26 @@ namespace EY {
             [NonSerialized]
             static List<String^>^ loadedAssemblies = gcnew List<String^>();
             List<String^>^ assemblyPaths;
+            [Category("ManagedSpy Properties")]
+            property Control^ NativeControl {
+                Control^ get();
+            }
+            /*
+            property Control^ NativeControl {
+                Control^ get() {
+                    MessageBox::Show("NativeControl = " + this->nativeControl->Text, "Java Debugger");
+                    return this->nativeControl;
+                }
+            }
+
+            property String^ MethodName {
+                String^ get() {
+                    MessageBox::Show("methodName = " + this->methodName, "Java Debugger");
+                    return methodName;
+                }
+            }
+*/
+            Control^ GetNativeControl();
 
             ControlProxy(IntPtr windowHandle);
 
@@ -338,6 +358,10 @@ namespace EY {
             }
 
             static void EnsureAssemblyResolve() {
+                MessageBox::Show("In assembly resolve! Assembly count is " + assemblies->Count, "Java Debugger");
+                for (int i = 0; i < assemblies->Count; i++) {
+                    MessageBox::Show("(EnsureAssemblyResolve) Assembly path is " + assemblies[i]->Location, "Java Debugger");
+                }
                 if (!subscribedAsmResolve) {
                     subscribedAsmResolve = true;
                     AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(ControlProxy::ProxyResolveEventHandler);
@@ -351,6 +375,7 @@ namespace EY {
 
                 if (assemblies != nullptr) {
                     for (int i = 0; i < assemblies->Count; i++) {
+                        MessageBox::Show("Assembly path is " + assemblies[i]->Location, "Java Debugger");
                         if (args->Name == assemblies[i]->FullName || args->Name == assemblies[i]->GetName()->Name) {
                             return assemblies[i];
                         }

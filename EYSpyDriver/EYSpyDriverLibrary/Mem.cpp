@@ -13,9 +13,21 @@ HANDLE MemoryStore::s_hMutex = CreateMutex(NULL, FALSE, NULL);
 Object^ MemoryStore::SendDataMessage(UINT Msg, Object^ parameter) {
 	Object^ retvalObj = nullptr;
 	if (parameter != nullptr) {
+		MessageBox::Show("parameter does not equal nullptr!", "Java Debugger");
 		StoreParameters(parameter);
 	}
+	if (Msg == NULL) {
+		MessageBox::Show("Msg == NULL", "Java Debugger");
+	}
+	if (m_notificationWindow.ToPointer() == nullptr) {
+		MessageBox::Show("notification.ToPointer is nullptr", "Java Debugger");
+	}
+	if (m_notificationWindow.ToPointer() == NULL) {
+		MessageBox::Show("notification.ToPointer is nullptr", "Java Debugger");
+	}
+	MessageBox::Show("m_processId is " + m_processId + "\nm_transactionId is " + m_transactionId + "\nMsg is " + Msg + "\nm_notificationWindow is " + m_notificationWindow, "Java Debugger");
 	LRESULT res = ::SendMessage((HWND)m_notificationWindow.ToPointer(), Msg, m_processId, m_transactionId);
+	MessageBox::Show("LRESULT of SendMessage is " + res, "Java Debugger");
 	return GetReturnValue();
 }
 
@@ -93,20 +105,23 @@ MemoryStore::MemoryStore(int processId, int transactionId, IntPtr notificationWi
 
 
 bool MemoryStore::StoreData(CAtlFileMapping<SharedData>& memory, Object^ data, LPCTSTR szMappingName) {
+	MessageBox::Show("In StoreData Method", "Java Debugger");
 	if (IsHandleValid(memory.GetHandle())) {
 		memory.Unmap();
+		MessageBox::Show("Memory unmapped", "Java Debugger");
 	}
 	MemoryStream^ stream = gcnew MemoryStream();
 	BinaryFormatter^ formatter = gcnew BinaryFormatter();
 	formatter->Binder = gcnew CustomizedBinder();
-	try {
-		formatter->Serialize(stream, data);
-	}
-	catch (SerializationException^) {
-		return false;
-	}
+	//try {
+	formatter->Serialize(stream, data);
+	//}
+	//catch(SerializationException^ ) {
+	//	return false;
+	//}
 	memory.MapSharedMem((unsigned long)stream->Length + sizeof(SIZE_T), szMappingName);
 	if (((SharedData*)memory) == NULL) {
+		MessageBox::Show("((SharedData*)data) == NULL", "Java Debugger");
 		return false;
 	}
 	((SharedData*)memory)->Size = static_cast<std::uint32_t>(stream->Length);
@@ -116,16 +131,22 @@ bool MemoryStore::StoreData(CAtlFileMapping<SharedData>& memory, Object^ data, L
 	for (unsigned int i = 0; i < ((SharedData*)memory)->Size; i++) {
 		pdata[i] = streamdata[i];
 	}
+	MessageBox::Show("Store data is returning true", "Java Debugger");
 	return true;
 }
 
 Object^ MemoryStore::GetData(CAtlFileMapping<SharedData>& data, LPCTSTR szMappingName) {
 	//we do this to allow these apis to work on the current process.
+	if (data == NULL) {
+		MessageBox::Show("data is NULL!", "Java Debugger");
+	}
 	if (!IsHandleValid(data.GetHandle())) {
-		data.OpenMapping(szMappingName, 0);
+		HRESULT s = data.OpenMapping(szMappingName, 0);
+		MessageBox::Show("data.OpenMapping(szMappingName, 0) was run and the result is " + s, "Java Debugger");
 	}
 	if (((SharedData*)data) == NULL) {
-		return nullptr;
+		MessageBox::Show("((SharedData*)data) == NULL", "Java Debugger");
+		return nullptr; // Aum commented for checking
 	}
 	array<unsigned char>^ sdata = gcnew array<unsigned char>(((SharedData*)data)->Size);
 	BYTE* pdata = (BYTE*)((SharedData*)data)->Data;
@@ -143,10 +164,19 @@ Object^ MemoryStore::GetData(CAtlFileMapping<SharedData>& data, LPCTSTR szMappin
 
 		retvalue = formatter->Deserialize(stream);
 	}
-	catch (SerializationException^ d) {
-		retvalue = nullptr;
-	}
+	//	catch(SerializationException^ d) {
+	 //       MessageBox::Show("SerializationException^ took place and Stream length is "+stream->Length + "\nThe message is " + d->Message + "\nThe stack trace is " + d->StackTrace + "\nThe inner exception is " + d->InnerException, "Java Debugger");
+	//		retvalue = nullptr;
+	//	}
+	catch (ArgumentNullException^) {
+		MessageBox::Show("ArgumentNullException^ took place", "Java Debugger");
 
+	}
+	catch (System::Security::SecurityException^) {
+		MessageBox::Show("SecurityException^ took place", "Java Debugger");
+
+	}
+	MessageBox::Show("SerializationException^ did NOT take place and Stream length is " + stream->Length, "Java Debugger");
 	return retvalue;
 }
 

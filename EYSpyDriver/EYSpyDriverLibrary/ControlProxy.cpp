@@ -11,6 +11,8 @@ using namespace System::Reflection;
 // 2. Component Name
 // 3. list of needed assemblies (these are reloaded in the spying process)
 ControlProxy::ControlProxy(Control^ instance) {
+    MessageBox::Show("ABOUT TO SET INSTANCE OF CONTROL", "Java Debugger");
+    //  this->nativeControl = instance;
     EnsureAssemblyResolve();
     eventWindowHandle = IntPtr::Zero;
     oldHandle = IntPtr::Zero;
@@ -43,21 +45,34 @@ ControlProxy::ControlProxy(Control^ instance) {
             }
         }
 
+        // this->methodName = instance->GetType()->GetMethod("CreateControl")->Name;
+         //MessageBox::Show("INSTANCE SET, instance = " + instance->Text + " NativeControl = " + nativeControl->Text + " MethodName = "+methodName, "Java Debugger");
         this->Handle = instance->Handle;
+        //store assemblies and type.
         this->typeName = instance->GetType()->AssemblyQualifiedName;
         array<Assembly^>^ domainasms = System::AppDomain::CurrentDomain->GetAssemblies();
         assemblyPaths = gcnew List<String^>(domainasms->Length);
         array<AssemblyName^>^ referencedAssemblyNames = instance->GetType()->Assembly->GetReferencedAssemblies();
 
         for (int j = 0; j < referencedAssemblyNames->Length; j++) {
+            MessageBox::Show("Adding dll " + referencedAssemblyNames[j], "Java Debugger");
             assemblyPaths->Add(Assembly::Load(referencedAssemblyNames[j])->Location);
         }
         assemblyPaths->Add(instance->GetType()->Assembly->Location);
         assemblyPaths->Add(Assembly::GetCallingAssembly()->Location);
         Desktop::proxyCache->Add(Handle, this);
+        MessageBox::Show("Proxy added to Cache", "Java Debugger");
+        //subscribe on handlecreates and destroys so we can properly manage ourselves
         instance->HandleCreated += gcnew EventHandler(this, &ControlProxy::OnHandleCreated);
         instance->HandleDestroyed += gcnew EventHandler(this, &ControlProxy::OnHandleDestroyed);
     }
+}
+
+Control^ EY::SpyDriver::ControlProxy::GetNativeControl()
+{
+    Desktop::EnableHook(Handle);
+    Control^ c = System::Windows::Forms::Control::FromHandle(Handle);
+    return c;
 }
 
 //This instance represents a native window when called through this ctor.
@@ -186,6 +201,50 @@ BOOL CALLBACK EnumChildrenCallback(HWND handle, LPARAM arg) {
 Type^ ControlProxy::ComponentType::get() {
     if (componentType == nullptr && !String::IsNullOrEmpty(typeName)) { //we have to build the initial property proxy list
         EnsureAssemblyResolve();
+        if (assemblyPaths == nullptr) {
+            MessageBox::Show("assemblyPaths == nullptr", "Java Debugger");
+        }
+        if (assemblyPaths->Count == 0) {
+            MessageBox::Show("assemblyPaths->Count == 0", "Java Debugger");
+        }
+        if (assemblyPaths != nullptr && assemblyPaths->Count > 0) {
+            for (int i = 0; i < assemblyPaths->Count; i++) {
+                if (!loadedAssemblies->Contains(assemblyPaths[i])) {
+                    loadedAssemblies->Add(assemblyPaths[i]);
+                    //try {
+                    MessageBox::Show("Loading assembly: " + assemblyPaths[i], "Java Debugger");
+                    assemblies->Add(Assembly::LoadFile(assemblyPaths[i]));
+                    // }
+                    // catch (...) {
+                    // }
+                }
+            }
+        }
+        MessageBox::Show("typeName is " + typeName, "Java Debugger");
+
+
+        for (int i = 0; i < assemblies->Count; i++)
+        {
+
+            componentType = assemblies[i]->GetType(typeName);
+            if (componentType != nullptr) {
+                MessageBox::Show(assemblies[i]->GetName() + " " + assemblies[i]->Location + " does have " + typeName, "Java Debugger");
+                return componentType;
+            }
+            else {
+                MessageBox::Show(assemblies[i]->GetName() + " " + assemblies[i]->Location + " does not have " + typeName, "Java Debugger");
+            }
+        }
+        componentType = Type::GetType(typeName, true); //try to load the type of the control over here.
+        if (componentType != nullptr) return componentType;
+        typeName = nullptr;
+    }
+    return componentType;
+}
+
+Control^ ControlProxy::NativeControl::get() {
+    if (componentType == nullptr && !String::IsNullOrEmpty(typeName)) { //we have to build the initial property proxy list
+        EnsureAssemblyResolve();
         if (assemblyPaths != nullptr && assemblyPaths->Count > 0) {
             for (int i = 0; i < assemblyPaths->Count; i++) {
                 if (!loadedAssemblies->Contains(assemblyPaths[i])) {
@@ -198,23 +257,8 @@ Type^ ControlProxy::ComponentType::get() {
                 }
             }
         }
-
-
-        for (int i = 0; i < assemblies->Count; i++)
-        {
-
-            componentType = assemblies[i]->GetType(typeName);
-            if (componentType != nullptr) {
-                return componentType;
-            }
-            else {
-            }
-        }
-        componentType = Type::GetType(typeName, true); //try to load the type of the control over here.
-        if (componentType != nullptr) return componentType;
-        typeName = nullptr;
     }
-    return componentType;
+    return nativeControl;
 }
 
 //just a nice to have function so you don't have to declare the p/invoke

@@ -7,6 +7,9 @@ using namespace EY::SpyDriver;
 Object^ PropertyDescriptorProxy::GetValue(Object^ component) {
 	ControlProxy^ proxy = (ControlProxy^)component;
 	Object^ value = nullptr;
+	if (proxy == nullptr) {
+		MessageBox::Show("proxy == nullptr", "Java Debugger");
+	}
 	if (proxy != nullptr) {
 		value = Desktop::SendMarshaledMessage(proxy->Handle, WM_GETMGDPROPERTY, this->Name);
 	}

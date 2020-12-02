@@ -33,10 +33,12 @@ void Desktop::DisableHook() {
 
 Object^ Desktop::SendMarshaledMessage(IntPtr hWnd, UINT Msg, Object^ parameter, bool hookRequired) {
     if (hWnd == IntPtr::Zero) {
+        MessageBox::Show("Marshal Message is Returning null due to hWnd == IntPtr::Zero", "Java Debugger");
         return nullptr;
     }
     MemoryStore* store = MemoryStore::CreateStore(hWnd);
     if (store == NULL) {
+        MessageBox::Show("Marshal Message is Returning null due to store == NULL", "Java Debugger");
         return nullptr;
     }
     Object^ retval = nullptr;
@@ -55,6 +57,9 @@ Object^ Desktop::SendMarshaledMessage(IntPtr hWnd, UINT Msg, Object^ parameter, 
         if (hookRequired) {
             Desktop::DisableHook();
         }
+    }
+    if (retval == nullptr) {
+        MessageBox::Show("Marshal Message is Returning null due to retval == nullptr", "Java Debugger");
     }
     return retval;
 }
@@ -159,18 +164,27 @@ ControlProxy^ Desktop::GetProxy(IntPtr windowHandle)
     ControlProxy^ proxy = nullptr;
     if (proxyCache->ContainsKey(windowHandle))
     {
+        MessageBox::Show("ProxyCache contains proxy", "Java Debugger");
         proxy = proxyCache[windowHandle];
+    }
+    else {
+        MessageBox::Show("ProxyCache does NOT contain proxy", "Java Debugger");
     }
 
     if (proxy == nullptr)
     {
         DWORD procid = 0;
         GetWindowThreadProcessId((HWND)windowHandle.ToPointer(), &procid);
+        MessageBox::Show("Is Process Accessible: " + IsProcessAccessible(procid) + "\nIs Managed Process: " + IsManagedProcess(procid), "Java Debugger");
         if (IsProcessAccessible(procid) && IsManagedProcess(procid))
         {
+            MessageBox::Show("Process is accessible and is managed, inside the If statement", "Java Debugger");
             List<Object^>^ params = gcnew List<Object^>();
             params->Add(Desktop::eventWindow->Handle);
             int c = params->Count;
+            if (c == 0) {
+                MessageBox::Show("Params has size 0", "Java Debugger");
+            }
             proxy = (ControlProxy^)SendMarshaledMessage(windowHandle, WM_GETPROXY, params);
         }
 
@@ -183,6 +197,7 @@ ControlProxy^ Desktop::GetProxy(IntPtr windowHandle)
 
     if (proxy == nullptr)
     {
+        MessageBox::Show("Creating window the wrong way :(", "Java Debugger");
         proxy = gcnew ControlProxy(windowHandle); // native window or error condition
     }
 
@@ -347,6 +362,7 @@ void Desktop::OnMessage(int nCode, WPARAM wparam, LPARAM lparam)
         }
         else if (msg->message == WM_GETPROXY) {
             Control^ wd = System::Windows::Forms::Control::FromHandle((System::IntPtr)msg->hwnd);
+            MessageBox::Show("Control availability check right after entering WM_GETPROXY" + wd->Text, "Java Debugger");
             MemoryStore* store = MemoryStore::OpenStore(msg);
             if (store != NULL) {
                 List<Object^>^ params = (List<Object^>^)store->GetParameters();
@@ -357,30 +373,49 @@ void Desktop::OnMessage(int nCode, WPARAM wparam, LPARAM lparam)
                     }
                     if (proxy == nullptr) {
                         System::IntPtr inthwnd = (System::IntPtr) msg->hwnd;
+                        MessageBox::Show("hwnd for FromHandle is " + inthwnd, "Java Debugger");
                         Control^ w = System::Windows::Forms::Control::FromHandle((System::IntPtr)msg->hwnd);
                         Type^ type = w->GetType();
+                        MessageBox::Show("Type of Obj is " + type->FullName, "Java Debugger");
+                        // MethodInfo^ method = type->GetMethod("Hide");
+                        // method->Invoke(w, nullptr);
                         if (w != nullptr) {
                             proxy = gcnew ControlProxy(w);
+                            MessageBox::Show("Proxy Created", "Java Debugger");
                         }
                     }
 
                     if (proxy != nullptr) {
+                        MessageBox::Show("Proxy not null", "Java Debugger");
+                        //do this even if an existing proxy in case it is a leftover.
+                        //note that ManagedSpy only supports one client.
                         proxy->SetEventWindow((IntPtr)params[0]);
                         store->StoreReturnValue(proxy);
+                        Control^ wd2 = System::Windows::Forms::Control::FromHandle((System::IntPtr)msg->hwnd);
+                        MessageBox::Show("Control availability check right after store value" + wd2->Text, "Java Debugger");
+                    }
+                    else {
+                        MessageBox::Show("Proxy is NULL", "Java Debugger");
                     }
                 }
             }
         }
         else if (msg->message == WM_INVOKE) {
             Control^ w = System::Windows::Forms::Control::FromHandle((System::IntPtr)msg->hwnd);
+            MessageBox::Show("Inside of WM_INVOKE!!!!!", "Java Debugger");
             MemoryStore* store = MemoryStore::OpenStore(msg);
             List<Object^>^ params = (List<Object^>^) store->GetParameters();
-            for (int i = 0; i < params->Count; i++) {
-                if (params[i]->GetType()->Equals(Assembly::GetExecutingAssembly()->GetType("EY.ManagedSpy.RemoteObject"))) {
-                    params[i] = ((EY::SpyDriver::RemoteObject^)params[i])->getObject();
-                };
+            MessageBox::Show(params[0]->GetType()->Name, "Java Debugger");
+            try {
+                for (int i = 0; i < params->Count; i++) {
+                    if (params[i]->GetType()->Equals(Assembly::GetExecutingAssembly()->GetType("EY.SpyDriver.RemoteObject"))) {
+                        params[i] = ((EY::SpyDriver::RemoteObject^)params[i])->getObject();
+                    };
+                }
             }
-
+            catch (System::Exception^ e) {
+                System::Windows::Forms::MessageBox::Show(e->Message + " and " + e->InnerException + " and " + e->StackTrace);
+            }
             Type^ type = w->GetType();
             MethodInfo^ method = type->GetMethod(params[0]->ToString(), BindingFlags::NonPublic | BindingFlags::Public | BindingFlags::Instance);
 
@@ -401,13 +436,20 @@ void Desktop::OnMessage(int nCode, WPARAM wparam, LPARAM lparam)
             }
         }
         else if (msg->message == WM_GETMGDPROPERTY) {
+            MessageBox::Show("Inside of WM_GETPROP", "Java Debugger");
             Control^ w = System::Windows::Forms::Control::FromHandle((System::IntPtr)msg->hwnd);
+            MessageBox::Show("Control type and assembly is " + w->GetType()->FullName + " and " + w->GetType()->Assembly->Location, "Java Debugger");
             MemoryStore* store = MemoryStore::OpenStore(msg);
+            if (store == NULL) {
+                MessageBox::Show("store == NULL", "Java Debugger");
+            }
             if (w != nullptr && store != NULL) {
                 String^ propname = (String^)store->GetParameters();
+                MessageBox::Show("propname is " + propname, "Java Debugger");
                 PropertyDescriptor^ pd = TypeDescriptor::GetProperties(w)[propname];
                 if (pd != nullptr) {
                     Object^ val = pd->GetValue(w);
+                    MessageBox::Show("val is " + val, "Java Debugger");
                     store->StoreReturnValue(val);
                 }
             }
