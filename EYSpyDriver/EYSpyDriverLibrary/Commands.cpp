@@ -4,7 +4,7 @@
 #include "Commands.h"
 #include "RemoteObject.h"
 
-using namespace System::Diagnostics;
+//using namespace System::Diagnostics;
 
 static HHOOK _messageHookHandle = NULL;
 
