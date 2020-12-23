@@ -14,6 +14,8 @@
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="AssemblyInfo.h" />
+    <ClInclude Include="WPFWIndowFinder.h" />
+    <ClInclude Include="EYWPFElements.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PropertyDescriptorProxy.cpp" />
@@ -26,15 +28,13 @@
     <ClCompile Include="MessageFilters.cpp" />
     <ClCompile Include="Stdafx.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="WPFWIndowFinder.cpp" />
+    <ClCompile Include="EYWPFElements.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="makefile.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="EYDriver.ico" />
+    <None Include="ReadMe.txt" />
+    <None Include="EYDriver.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EYDriver.rc" />

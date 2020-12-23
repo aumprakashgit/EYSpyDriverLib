@@ -241,6 +241,12 @@ namespace EY {
 
             Object^ Invoke(String^ methodName, array<Object^>^ o);
 
+            Object^ WPFInvoke(IntPtr mainWindowHandle, String^ methodName, array<Object^>^ o);
+
+            int ControlProxy::FindCountofWindow(LPCWSTR childElementName);
+
+            //std::vector<Handles::child_data> ControlProxy::GetWPFChildElements(IntPtr mainWindowHandle);
+
             void UnsubscribeEvent(String^ eventName) {
                 UnsubscribeEvent(GetEvents()[eventName]);
             }
@@ -307,6 +313,8 @@ namespace EY {
             }
 
             static ControlProxy^ FromHandle(System::IntPtr windowHandle);
+
+            static ControlProxy^ WPFFromHandle(System::IntPtr mainWindowHandle, DWORD processId);
 
             static property array<ControlProxy^>^ TopLevelWindows {
                 array<ControlProxy^>^ get();

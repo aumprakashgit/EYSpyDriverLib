@@ -75,6 +75,7 @@ namespace EY {
 
             static ControlProxy^ GetProxy(System::IntPtr windowHandle);
             static array<ControlProxy^>^ GetTopLevelWindows();
+            static ControlProxy^ WPFGetProxy(System::IntPtr windowHandle, DWORD processId);
         };
     }
 }

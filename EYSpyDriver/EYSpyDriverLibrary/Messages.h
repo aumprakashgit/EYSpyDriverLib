@@ -26,3 +26,5 @@ static unsigned int WM_WINDOWDESTROYED = ::RegisterWindowMessage(L"MSFT_ManagedS
 static unsigned int WM_HANDLECHANGED = ::RegisterWindowMessage(L"MSFT_ManagedSpy_HANDLECHANGED");
 //Spied sends: a method to invoke on a control
 static unsigned int WM_INVOKE = ::RegisterWindowMessage(L"MSFT_ManagedSpy_INVOKE");
+//Spied sends: a method to invoke on a control for WPF Driver
+static unsigned int WM_WPF_INVOKE = ::RegisterWindowMessage(L"MSFT_ManagedSpy_WPF_INVOKE");

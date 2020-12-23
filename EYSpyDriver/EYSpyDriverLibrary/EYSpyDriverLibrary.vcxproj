@@ -19,15 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System">
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </Reference>
-        <Reference Include="System.Data">
+    <Reference Include="System.Data">
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </Reference>
-        <Reference Include="System.Drawing">
+    <Reference Include="System.Drawing">
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </Reference>
@@ -51,6 +52,7 @@
     <ClInclude Include="EventTargetWindow.h">
       <FileType>CppControl</FileType>
     </ClInclude>
+    <ClInclude Include="EYWPFElements.h" />
     <ClInclude Include="Mem.h" />
     <ClInclude Include="MessageFilters.hpp" />
     <ClInclude Include="Messages.h" />
@@ -58,6 +60,7 @@
     <ClInclude Include="RemoteObject.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="WPFWIndowFinder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
@@ -65,6 +68,7 @@
     <ClCompile Include="ControlProxy.cpp" />
     <ClCompile Include="CustomizedBinder.cpp" />
     <ClCompile Include="EventTargetWindow.cpp" />
+    <ClCompile Include="EYWPFElements.cpp" />
     <ClCompile Include="Mem.cpp" />
     <ClCompile Include="MessageFilters.cpp" />
     <ClCompile Include="PropertyDescriptorProxy.cpp" />
@@ -75,13 +79,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WPFWIndowFinder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="makefile.def" />
     <None Include="ReadMe.txt" />
     <None Include="EYDriver.ico" />
   </ItemGroup>
-
   <ItemGroup>
     <ResourceCompile Include="EYDriver.rc" />
   </ItemGroup>
@@ -101,7 +105,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -109,25 +112,22 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-    <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
